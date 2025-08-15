@@ -39,3 +39,9 @@ steps:
             restrictPublicBuckets: true
           versioning:
             status: Enabled
+
+  - id: apply-manifest
+    name: Apply S3 Bucket
+    action: kubernetes:apply
+    input:
+      manifestPath: s3-bucket.yaml
