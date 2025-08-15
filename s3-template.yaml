@@ -1,0 +1,92 @@
+apiVersion: backstage.io/v1alpha1
+kind: Template
+metadata:
+  name: aws-ack-resources
+  title: AWS ACK Resources Template
+  description: Deploy S3 bucket and DynamoDB table using AWS Controllers for Kubernetes
+  tags:
+    - aws
+    - s3
+    - dynamodb
+    - ack
+    - kubernetes
+spec:
+  owner: platform-team
+  type: service
+  parameters:
+    - title: Application Information
+      required:
+        - name
+        - owner
+      properties:
+        name:
+          title: Name
+          type: string
+          description: Unique name for your application
+          pattern: '^[a-z0-9-]+$'
+        owner:
+          title: Owner
+          type: string
+          description: Owner of the application
+          default: platform-team
+    - title: AWS Resources Configuration
+      required:
+        - bucketName
+        - tableName
+      properties:
+        bucketName:
+          title: S3 Bucket Name
+          type: string
+          description: Name for the S3 bucket (must be globally unique)
+          pattern: '^[a-z0-9.-]+$'
+        tableName:
+          title: DynamoDB Table Name
+          type: string
+          description: Name for the DynamoDB table
+          pattern: '^[a-zA-Z0-9._-]+$'
+  steps:
+    - id: create-s3-bucket
+      name: Create S3 Bucket
+      action: kubernetes:apply
+      input:
+        namespaced: true
+        manifest: |
+          apiVersion: s3.services.k8s.aws/v1alpha1
+          kind: Bucket
+          metadata:
+            name: ${{ parameters.name }}-s3-bucket
+            namespace: default
+          spec:
+            name: ${{ parameters.bucketName }}
+            publicAccessBlock:
+              blockPublicAcls: true
+              blockPublicPolicy: true
+              ignorePublicAcls: true
+              restrictPublicBuckets: true
+            versioning:
+              status: Enabled
+            serverSideEncryptionConfiguration:
+              rules:
+              - applyServerSideEncryptionByDefault:
+                  sseAlgorithm: AES256
+  output:
+    text:
+      - title: S3 Bucket
+        content: 'Bucket Name: ${{ parameters.bucketName }}'
+      - title: DynamoDB Table  
+        content: 'Table Name: ${{ parameters.tableName }}'
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: pattern1-app1
+  title: Pattern1 App1 - AWS Resources
+  description: Application with S3 bucket and DynamoDB table deployed via AWS ACK
+  annotations:
+    backstage.io/kubernetes-id: pattern1-app1
+    backstage.io/kubernetes-namespace: default
+spec:
+  type: service
+  lifecycle: experimental
+  owner: platform-team
+  system: aws-infrastructure
