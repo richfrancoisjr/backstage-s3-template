@@ -6,44 +6,53 @@ metadata:
 spec:
   owner: platform-team
   type: service
-  parameters:
-    - title: S3 Configuration
-      properties:
-        bucketName:
-          title: Bucket Name
-          type: string
-          description: Name of the S3 bucket to create
-          pattern: ^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$
-steps:
-  - id: log
-    name: Log
-    action: debug:log
-    input:
-      message: Creating bucket ${{ parameters.bucketName }}
+  description: Template to create AWS S3 buckets using ACK controller
   
-  - id: create-s3-manifest
-    name: Create S3 Bucket Manifest
-    action: fs:write
-    input:
-      path: s3-bucket.yaml
-      content: |
-        apiVersion: s3.services.k8s.aws/v1alpha1
-        kind: Bucket
-        metadata:
-          name: ${{ parameters.bucketName }}
-          namespace: default
-        spec:
-          name: ${{ parameters.bucketName }}
-          publicAccessBlock:
-            blockPublicAcls: true
-            blockPublicPolicy: true
-            ignorePublicAcls: true
-            restrictPublicBuckets: true
-          versioning:
-            status: Enabled
+  schema:
+    required:
+      - bucketName
+    properties:
+      bucketName:
+        title: Bucket Name
+        type: string
+        description: Name of the S3 bucket to create
+        pattern: ^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$
 
-  - id: apply-manifest
-    name: Apply S3 Bucket Manifest
-    action: kubernetes:apply
-    input:
-      path: s3-bucket.yaml
+  steps:
+    - id: log
+      name: Log
+      action: debug:log
+      input:
+        message: Creating bucket ${{ parameters.bucketName }}
+    
+    - id: create-s3-manifest
+      name: Create S3 Bucket Manifest
+      action: fs:write
+      input:
+        path: s3-bucket.yaml
+        content: |
+          apiVersion: s3.services.k8s.aws/v1alpha1
+          kind: Bucket
+          metadata:
+            name: ${{ parameters.bucketName }}
+            namespace: default
+          spec:
+            name: ${{ parameters.bucketName }}
+            publicAccessBlock:
+              blockPublicAcls: true
+              blockPublicPolicy: true
+              ignorePublicAcls: true
+              restrictPublicBuckets: true
+            versioning:
+              status: Enabled
+
+    - id: apply-manifest
+      name: Apply S3 Bucket Manifest
+      action: kubernetes:apply
+      input:
+        path: s3-bucket.yaml
+
+  output:
+    links:
+      - title: S3 Bucket
+        url: https://s3.console.aws.amazon.com/s3/buckets/${{ parameters.bucketName }}
