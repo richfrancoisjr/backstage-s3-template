@@ -3,47 +3,18 @@ kind: Template
 metadata:
   name: aws-ack-resources
   title: AWS ACK Resources Template
-  description: Deploy S3 bucket using AWS Controllers for Kubernetes
-  tags:
-    - aws
-    - s3
 spec:
   owner: platform-team
   type: service
   parameters:
-    - title: Application Information
-      required:
-        - name
-        - bucketName
+    - title: S3 Configuration
       properties:
-        name:
-          title: Name
-          type: string
-          pattern: '^[a-z0-9-]+$'
         bucketName:
-          title: S3 Bucket Name
+          title: Bucket Name
           type: string
-          pattern: '^[a-z0-9.-]+$'
   steps:
-    - id: fetch
-      name: Fetch Template
-      action: fetch:template
+    - id: log
+      name: Log
+      action: debug:log
       input:
-        url: ./content
-        values:
-          name: ${{ parameters.name }}
-          bucketName: ${{ parameters.bucketName }}
-    
-    - id: catalog-write
-      name: Write Catalog Info
-      action: catalog:write
-      input:
-        filePath: catalog-info.yaml
-        entity:
-          apiVersion: backstage.io/v1alpha1
-          kind: Component
-          metadata:
-            name: ${{ parameters.name }}
-          spec:
-            type: service
-            owner: platform-team
+        message: Creating bucket ${{ parameters.bucketName }}
