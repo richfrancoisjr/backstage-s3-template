@@ -39,10 +39,3 @@ steps:
             restrictPublicBuckets: true
           versioning:
             status: Enabled
-
-  - id: instructions
-    name: Manual Apply Instructions
-    action: debug:log
-    input:
-      message: "Run: kubectl apply -f s3-bucket.yaml"
-
