@@ -5,4 +5,6 @@ metadata:
   title: Test Component
 spec:
   type: service
+  lifecycle: experimental
   owner: platform-team
+
