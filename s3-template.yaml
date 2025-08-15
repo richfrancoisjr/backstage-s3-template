@@ -40,8 +40,9 @@ steps:
           versioning:
             status: Enabled
 
-  - id: apply-manifest
-    name: Apply S3 Bucket
-    action: kubernetes:apply
+  - id: instructions
+    name: Manual Apply Instructions
+    action: debug:log
     input:
-      manifestPath: s3-bucket.yaml
+      message: "Run: kubectl apply -f s3-bucket.yaml"
+
