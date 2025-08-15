@@ -3,21 +3,20 @@ kind: Template
 metadata:
   name: aws-ack-resources
   title: AWS ACK Resources Template
-spec:
-  owner: platform-team
-  type: service
   description: Template to create AWS S3 buckets using ACK controller
+spec:
+  type: service
+  owner: platform-team
+  parameters:
+    - title: S3 Configuration
+      required: ['bucketName']
+      properties:
+        bucketName:
+          title: Bucket Name
+          type: string
+          description: Name of the S3 bucket to create
+          pattern: ^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$
   
-  schema:
-    required:
-      - bucketName
-    properties:
-      bucketName:
-        title: Bucket Name
-        type: string
-        description: Name of the S3 bucket to create
-        pattern: ^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$
-
   steps:
     - id: log
       name: Log
