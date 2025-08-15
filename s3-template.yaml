@@ -1,13 +1,12 @@
-apiVersion: backstage.io/v1alpha1
+apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: aws-ack-resources
   title: AWS ACK Resources Template
-  description: Deploy S3 bucket and DynamoDB table using AWS Controllers for Kubernetes
+  description: Deploy S3 bucket using AWS Controllers for Kubernetes
   tags:
     - aws
     - s3
-    - dynamodb
     - ack
     - kubernetes
 spec:
@@ -32,18 +31,12 @@ spec:
     - title: AWS Resources Configuration
       required:
         - bucketName
-        - tableName
       properties:
         bucketName:
           title: S3 Bucket Name
           type: string
           description: Name for the S3 bucket (must be globally unique)
           pattern: '^[a-z0-9.-]+$'
-        tableName:
-          title: DynamoDB Table Name
-          type: string
-          description: Name for the DynamoDB table
-          pattern: '^[a-zA-Z0-9._-]+$'
   steps:
     - id: create-s3-bucket
       name: Create S3 Bucket
@@ -69,24 +62,3 @@ spec:
               rules:
               - applyServerSideEncryptionByDefault:
                   sseAlgorithm: AES256
-  output:
-    text:
-      - title: S3 Bucket
-        content: 'Bucket Name: ${{ parameters.bucketName }}'
-      - title: DynamoDB Table  
-        content: 'Table Name: ${{ parameters.tableName }}'
----
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: pattern1-app1
-  title: Pattern1 App1 - AWS Resources
-  description: Application with S3 bucket and DynamoDB table deployed via AWS ACK
-  annotations:
-    backstage.io/kubernetes-id: pattern1-app1
-    backstage.io/kubernetes-namespace: default
-spec:
-  type: service
-  lifecycle: experimental
-  owner: platform-team
-  system: aws-infrastructure
