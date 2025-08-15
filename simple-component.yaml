@@ -7,4 +7,3 @@ spec:
   type: service
   lifecycle: experimental
   owner: platform-team
-
