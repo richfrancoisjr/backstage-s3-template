@@ -24,7 +24,7 @@ spec:
       name: Create S3 Bucket Manifest
       action: fetch:template
       input:
-        url: github:richfrancoisjr/backstage-s3-template/s3-template.yaml
+        url: github:richfrancoisjr/backstage-s3-template/manifests
         targetPath: ./
         values:
           bucketName: ${{ parameters.bucketName }}
@@ -33,4 +33,4 @@ spec:
       name: Apply S3 Bucket Manifest
       action: kubernetes:apply
       input:
-        path: s3-template.yaml
+        path: s3-bucket.yaml
