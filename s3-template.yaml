@@ -22,19 +22,17 @@ spec:
     
     - id: create-manifest
       name: Create S3 Bucket Manifest
-      action: fetch:template
+      action: fetch:plain
       input:
-        targetPath: ./
-        values:
-          bucketName: ${{ parameters.bucketName }}
-        template: |
+        targetPath: s3-bucket.yaml
+        data: |
           apiVersion: s3.services.k8s.aws/v1alpha1
           kind: Bucket
           metadata:
-            name: ${{ values.bucketName }}
+            name: ${{ parameters.bucketName }}
             namespace: default
           spec:
-            name: ${{ values.bucketName }}
+            name: ${{ parameters.bucketName }}
             publicAccessBlock:
               blockPublicAcls: true
               blockPublicPolicy: true
