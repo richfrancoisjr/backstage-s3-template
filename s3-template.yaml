@@ -24,7 +24,7 @@ spec:
       name: Create S3 Bucket Manifest
       action: fetch:template
       input:
-        url: github:richfrancoisjr/backstage-s3-template/manifests
+        url: https://raw.githubusercontent.com/richfrancoisjr/backstage-s3-template/main/manifests
         targetPath: ./
         values:
           bucketName: ${{ parameters.bucketName }}
