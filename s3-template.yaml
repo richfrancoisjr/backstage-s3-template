@@ -20,17 +20,13 @@ spec:
       input:
         message: Creating bucket ${{ parameters.bucketName }}
     
-    - id: fetch-template
-      name: Fetch S3 Manifest
+    - id: create-manifest
+      name: Create S3 Bucket Manifest
       action: fetch:template
       input:
-        url: ./
+        targetPath: ./
         values:
           bucketName: ${{ parameters.bucketName }}
-        targetPath: ./
-        templateFile: s3-bucket.yaml
-        copyWithoutRender: []
-        copyWithoutTemplating: []
         template: |
           apiVersion: s3.services.k8s.aws/v1alpha1
           kind: Bucket
