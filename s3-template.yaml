@@ -22,27 +22,15 @@ spec:
     
     - id: create-manifest
       name: Create S3 Bucket Manifest
-      action: fetch:plain
+      action: fetch:template
       input:
-        targetPath: s3-bucket.yaml
-        data: |
-          apiVersion: s3.services.k8s.aws/v1alpha1
-          kind: Bucket
-          metadata:
-            name: ${{ parameters.bucketName }}
-            namespace: default
-          spec:
-            name: ${{ parameters.bucketName }}
-            publicAccessBlock:
-              blockPublicAcls: true
-              blockPublicPolicy: true
-              ignorePublicAcls: true
-              restrictPublicBuckets: true
-            versioning:
-              status: Enabled
+        url: github:richfrancoisjr/backstage-s3-template/s3-template.yaml
+        targetPath: ./
+        values:
+          bucketName: ${{ parameters.bucketName }}
 
     - id: apply-manifest
       name: Apply S3 Bucket Manifest
       action: kubernetes:apply
       input:
-        path: s3-bucket.yaml
+        path: s3-template.yaml
