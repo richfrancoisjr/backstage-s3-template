@@ -20,19 +20,25 @@ spec:
       input:
         message: Creating bucket ${{ parameters.bucketName }}
     
-    - id: create-s3-manifest
-      name: Create S3 Bucket Manifest
-      action: fs:write
+    - id: fetch-template
+      name: Fetch S3 Manifest
+      action: fetch:template
       input:
-        path: s3-bucket.yaml
-        content: |
+        url: ./
+        values:
+          bucketName: ${{ parameters.bucketName }}
+        targetPath: ./
+        templateFile: s3-bucket.yaml
+        copyWithoutRender: []
+        copyWithoutTemplating: []
+        template: |
           apiVersion: s3.services.k8s.aws/v1alpha1
           kind: Bucket
           metadata:
-            name: ${{ parameters.bucketName }}
+            name: ${{ values.bucketName }}
             namespace: default
           spec:
-            name: ${{ parameters.bucketName }}
+            name: ${{ values.bucketName }}
             publicAccessBlock:
               blockPublicAcls: true
               blockPublicPolicy: true
