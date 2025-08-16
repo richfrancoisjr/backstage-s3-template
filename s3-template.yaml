@@ -19,3 +19,24 @@ spec:
       action: debug:log
       input:
         message: Creating bucket ${{ parameters.bucketName }}
+    
+    - id: create-s3-manifest
+      name: Create S3 Bucket Manifest
+      action: fs:write
+      input:
+        path: s3-bucket.yaml
+        content: |
+          apiVersion: s3.services.k8s.aws/v1alpha1
+          kind: Bucket
+          metadata:
+            name: ${{ parameters.bucketName }}
+            namespace: default
+          spec:
+            name: ${{ parameters.bucketName }}
+            publicAccessBlock:
+              blockPublicAcls: true
+              blockPublicPolicy: true
+              ignorePublicAcls: true
+              restrictPublicBuckets: true
+            versioning:
+              status: Enabled
