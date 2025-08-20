@@ -29,8 +29,15 @@ spec:
         values:
           bucketName: ${{ parameters.bucketName }}
 
-    - id: apply-manifest
-      name: Apply S3 Bucket Manifest
-      action: kubernetes:apply
+    - id: show-manifest
+      name: Show Generated Manifest
+      action: debug:log
       input:
-        path: s3-bucket.yaml
+        message: |
+          S3 bucket manifest created successfully!
+          
+          To apply this manifest to your cluster, run:
+          kubectl apply -f s3-bucket.yaml
+          
+          The manifest file has been generated with bucket name: ${{ parameters.bucketName }}
+
