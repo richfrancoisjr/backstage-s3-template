@@ -90,19 +90,38 @@ spec:
 
     - id: create-manifest
       name: Create DynamoDB Table Manifest
-      action: fetch:template
+      action: catalog:write
       input:
-        url: https://raw.githubusercontent.com/richfrancoisjr/backstage-templates/main/manifests/
-        targetPath: ./
-        values:
-          tableName: ${{ parameters.tableName }}
-          partitionKey: ${{ parameters.partitionKey }}
-          partitionKeyType: ${{ parameters.partitionKeyType }}
-          sortKey: ${{ parameters.sortKey }}
-          sortKeyType: ${{ parameters.sortKeyType }}
-          billingMode: ${{ parameters.billingMode }}
-          readCapacity: ${{ parameters.readCapacity }}
-          writeCapacity: ${{ parameters.writeCapacity }}
+        path: dynamodb-table.yaml
+        content: |
+          apiVersion: dynamodb.services.k8s.aws/v1alpha1
+          kind: Table
+          metadata:
+            name: ${{ parameters.tableName }}
+            namespace: default
+          spec:
+            tableName: ${{ parameters.tableName }}
+            billingMode: ${{ parameters.billingMode }}
+            attributeDefinitions:
+              - attributeName: ${{ parameters.partitionKey }}
+                attributeType: ${{ parameters.partitionKeyType }}
+          {% if parameters.sortKey %}    - attributeName: ${{ parameters.sortKey }}
+                attributeType: ${{ parameters.sortKeyType }}{% endif %}
+            keySchema:
+              - attributeName: ${{ parameters.partitionKey }}
+                keyType: HASH
+          {% if parameters.sortKey %}    - attributeName: ${{ parameters.sortKey }}
+                keyType: RANGE{% endif %}
+          {% if parameters.billingMode == 'PROVISIONED' %}  provisionedThroughput:
+              readCapacityUnits: ${{ parameters.readCapacity }}
+              writeCapacityUnits: ${{ parameters.writeCapacity }}{% endif %}
+            tags:
+              - key: "CreatedBy"
+                value: "Backstage"
+              - key: "Template"
+                value: "aws-dynamodb-table"
+              - key: "Environment"
+                value: "development"
 
     - id: show-manifest
       name: DynamoDB Table Manifest Created Successfully
