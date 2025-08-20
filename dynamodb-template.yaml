@@ -92,7 +92,7 @@ spec:
       name: Create DynamoDB Table Manifest
       action: fetch:template
       input:
-        url: ./manifests/
+        url: https://raw.githubusercontent.com/richfrancoisjr/backstage-templates/main/manifests/
         targetPath: ./
         values:
           tableName: ${{ parameters.tableName }}
